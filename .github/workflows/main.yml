@@ -1,0 +1,53 @@
+name: Padavan‑4.4 XY‑C1 Build
+on:
+  workflow_dispatch:  # 手动触发编译
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write   # 必须，用于生成Release
+    steps:
+      - name: Git clone forked padavan‑4.4 source
+        run: |
+          git clone https://github.com【替换成你fork的padavan‑4.4仓库地址】.git src
+          cd src
+          git checkout master
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip libtool-bin curl cmake gperf gawk flex bison xxd fakeroot kmod cpio git python3-docutils gettext automake autopoint texinfo build-essential help2man pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses-dev libltdl-dev wget libc-dev-bin
+
+      - name: Download mipsel toolchain
+        run: |
+          cd src/toolchain-mipsel
+          ./dl_toolchain.sh
+
+      - name: Compile XY‑C1 firmware
+        run: |
+          cd src/trunk
+          ./clear_tree
+          fakeroot ./build_firmware_modify XY-C1
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XY-C1-firmware
+          path: src/trunk/images/*.trx
+
+      - name: Generate tag string
+        id: gen_tag
+        run: |
+          echo "BUILD_TAG=XY-C1-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
+
+      - name: Auto Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.BUILD_TAG }}
+          name: Padavan‑4.4 XY‑C1 ${{ env.BUILD_TAG }}
+          generate_release_notes: true
+          files: |
+            src/trunk/images/*.trx
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
