@@ -27,12 +27,8 @@ jobs:
       - name: Compile XY‑C1 firmware
         run: |
           cd src/trunk
-          pwd
-          ls configs/templates/
-          ./clear_tree
-          cp configs/templates/XY-C1.config .config
-          ls -la .config
           fakeroot ./build_firmware_modify XY-C1
+          ./clear_tree
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
