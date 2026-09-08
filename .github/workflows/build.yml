@@ -28,7 +28,7 @@ jobs:
         run: |
           cd src/trunk
           ./clear_tree
-          cp configs/templates/XY-C1.config .config
+          cp src/trunk/configs/templates/XY‑C1.config
           ls -la .config
           fakeroot ./build_firmware_modify XY-C1
 
