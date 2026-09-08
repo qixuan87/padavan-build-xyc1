@@ -27,8 +27,10 @@ jobs:
       - name: Compile XY‑C1 firmware
         run: |
           cd src/trunk
+          pwd
+          ls configs/templates/
           ./clear_tree
-          cp src/trunk/configs/templates/XY‑C1.config .config
+          cp configs/templates/XY-C1.config .config
           ls -la .config
           fakeroot ./build_firmware_modify XY-C1
 
