@@ -28,6 +28,8 @@ jobs:
         run: |
           cd src/trunk
           ./clear_tree
+          cp configs/templates/XY-C1.config .config
+          ls -la .config
           fakeroot ./build_firmware_modify XY-C1
 
       - name: Upload Artifact
