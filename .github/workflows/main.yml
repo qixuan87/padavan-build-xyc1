@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Git clone forked padavan‑4.4 source
         run: |
-          git clone https://github.com【替换成你fork的padavan‑4.4仓库地址】.git src
+          git clone https://github.com/qixuan87/padavan-4.4.git src
           cd src
           git checkout master
 
