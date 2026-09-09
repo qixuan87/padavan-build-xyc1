@@ -1,16 +1,15 @@
 name: Padavan‑4.4 XY‑C1 Build
 on:
   workflow_dispatch:  # 手动触发编译
-
 jobs:
   build:
     runs-on: ubuntu-22.04
     permissions:
-      contents: write   # 必须，用于生成Release
+      contents: write   # 用于创建Release和tag
     steps:
       - name: Git clone forked padavan‑4.4 source
         run: |
-          git clone https://github.com/qixuan87/padavan-4.4.git src
+          git clone --depth=1 https://github.com/qixuan87/padavan-4.4.git src
           cd src
           git checkout main
 
@@ -24,11 +23,20 @@ jobs:
           cd src/toolchain-mipsel
           ./dl_toolchain.sh
 
+      - name: Clean old build tree
+        run: |
+          cd src/trunk
+          ./clear_tree
+
       - name: Compile XY‑C1 firmware
         run: |
           cd src/trunk
           fakeroot ./build_firmware_modify XY-C1
-          ./clear_tree
+
+      - name: Check firmware file exists
+        run: |
+          ls -la src/trunk/images/
+          test -n "$(ls src/trunk/images/*.trx 2>/dev/null)"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -39,7 +47,7 @@ jobs:
       - name: Generate tag string
         id: gen_tag
         run: |
-          echo "BUILD_TAG=XY-C1-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
+          echo "BUILD_TAG=XY-C1-$(date +%Y%m%d-%H%M --date='+8 hours')" >> $GITHUB_ENV
 
       - name: Auto Create Release
         uses: softprops/action-gh-release@v2
