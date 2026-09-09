@@ -23,11 +23,6 @@ jobs:
           cd src/toolchain-mipsel
           ./dl_toolchain.sh
 
-      - name: Clean old build tree
-        run: |
-          cd src/trunk
-          ./clear_tree
-
       - name: Compile XY‑C1 firmware
         run: |
           cd src/trunk
